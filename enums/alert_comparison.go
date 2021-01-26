@@ -1,21 +1,9 @@
 package enums
 
-type AlertComparison struct {
-	value string
-}
+type AlertComparison string
 
-func (ac *AlertComparison) Value() string {
-	return ac.value
-}
+const (
+	AlertComparison_GREATER_THAN AlertComparison = "greater_than"
+	AlertComparison_LESS_THAN AlertComparison = "less_than"
+)
 
-func (ac *AlertComparison) Is(comparison AlertComparison) bool {
-	return comparison.Value() == ac.Value()
-}
-
-func AlertComparisonGreaterThan() AlertComparison {
-	return AlertComparison{value: "greater_than"}
-}
-
-func AlertComparisonLessThan() AlertComparison {
-	return AlertComparison{value: "less_than"}
-}

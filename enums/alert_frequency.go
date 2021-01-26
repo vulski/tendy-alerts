@@ -1,39 +1,13 @@
 package enums
 
-type AlertFrequency struct{ value string }
+type AlertFrequency string
 
-func (af *AlertFrequency) Value() string {
-	return af.value
-}
-
-func (af *AlertFrequency) Is(frequency AlertFrequency) bool {
-	return frequency.Value() == af.Value()
-}
-
-func AlertFrequencyOneTime() AlertFrequency {
-	return AlertFrequency{value: "one_time"}
-}
-
-func AlertFrequency15m() AlertFrequency {
-	return AlertFrequency{value: "15m"}
-}
-
-func AlertFrequency30m() AlertFrequency {
-	return AlertFrequency{value: "30m"}
-}
-
-func AlertFrequency1h() AlertFrequency {
-	return AlertFrequency{value: "1h"}
-}
-
-func AlertFrequency6hr() AlertFrequency {
-	return AlertFrequency{value: "6h"}
-}
-
-func AlertFrequency12hr() AlertFrequency {
-	return AlertFrequency{value: "12h"}
-}
-
-func AlertFrequency24hr() AlertFrequency {
-	return AlertFrequency{value: "24h"}
-}
+const (
+	AlertFrequency_ONE_TIME AlertFrequency = "one_time"
+	AlertFrequency_15m                     = "15m"
+	AlertFrequency_30m                     = "30m"
+	AlertFrequency_1hr                     = "1hr"
+	AlertFrequency_6hr                     = "6hr"
+	AlertFrequency_12hr                    = "12hr"
+	AlertFrequency_24hr                    = "24hr"
+)

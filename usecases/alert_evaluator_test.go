@@ -30,16 +30,17 @@ func TestTargetAlertLessThanComparisonShouldPass(t *testing.T) {
 	// Given
 	targetAlert := &models.Alert{
 		Currency:  "BTC",
-		Frequency: enums.AlertFrequencyOneTime(),
 		Price:     20000,
+		Type:      enums.AlertType_TARGET_ALERT,
+		Frequency: enums.AlertFrequency_ONE_TIME,
+		Comparison: enums.AlertComparison_LESS_THAN,
 		TradePair: "BTC/USD",
-		Type:      enums.AlertTypeTargetAlert(),
 	}
 	latestPrice := models.CurrencyPriceLog{Price: 20001}
 
 	// When
 	// Then
-	if false == sut.ShouldAlertUser(latestPrice, targetAlert) {
+	if true == sut.ShouldAlertUser(latestPrice, targetAlert) {
 		t.Fail()
 	}
 }
@@ -48,10 +49,11 @@ func TestTargetAlertGreaterThanComparisonShouldPass(t *testing.T) {
 	// Given
 	targetAlert := &models.Alert{
 		Currency:  "BTC",
-		Frequency: enums.AlertFrequencyOneTime(),
 		Price:     20000,
+		Type:      enums.AlertType_TARGET_ALERT,
+		Frequency: enums.AlertFrequency_ONE_TIME,
+		Comparison: enums.AlertComparison_GREATER_THAN,
 		TradePair: "BTC/USD",
-		Type:      enums.AlertTypeTargetAlert(),
 	}
 	latestPrice := models.CurrencyPriceLog{Price: 20001}
 
@@ -66,11 +68,11 @@ func TestTargetAlertGreaterThanComparisonShouldFail(t *testing.T) {
 	// Given
 	targetAlert := &models.Alert{
 		Currency:  "BTC",
-		Frequency: enums.AlertFrequencyOneTime(),
 		Price:     20000,
+		Type:      enums.AlertType_TARGET_ALERT,
+		Frequency: enums.AlertFrequency_ONE_TIME,
+		Comparison: enums.AlertComparison_GREATER_THAN,
 		TradePair: "BTC/USD",
-		Type:      enums.AlertTypeTargetAlert(),
-		Comparison: enums.AlertComparisonGreaterThan(),
 	}
 	latestPrice := models.CurrencyPriceLog{Price: 10000}
 
