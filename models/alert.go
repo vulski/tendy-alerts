@@ -14,4 +14,5 @@ type Alert struct {
 	Comparison       enums.AlertComparison
 	TradePair        string
 	Timestamp        time.Time
+	Active           bool
 }
