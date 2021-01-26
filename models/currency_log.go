@@ -3,7 +3,7 @@ package models
 import "time"
 
 type CurrencyPriceLog struct {
-	Stub      string `json:"stub"`
+	Currency  string `json:"stub"`
 	Price     string `json:"price"`
 	Timestamp time.Time
 }

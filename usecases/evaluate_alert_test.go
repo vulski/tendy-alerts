@@ -3,6 +3,7 @@ package usecases
 import (
 	"github.com/vulski/tendy-alerts/models"
 	"testing"
+	"time"
 )
 
 var currencyPriceLogRepoStub CurrencyPriceLogRepoStub
@@ -24,15 +25,44 @@ func (r *CurrencyPriceLogRepoStub) GetWithConstraints(constraints models.Currenc
 	return r.Logs, nil
 }
 
-func TestTargetAlert(t *testing.T) {
+func TestTargetAlertShouldNotNotify(t *testing.T) {
 	// Given
 	targetAlert := &models.Alert{
+		Currency:  "BTC",
 		Frequency: models.OneTime,
-		Price: "20000",
+		Price:     "20000",
 		TradePair: "BTC/USD",
-		Type: models.TargetAlert,
+		Type:      models.TargetAlert,
 	}
-	currencyPriceLogRepoStub.AddLog(&models.CurrencyPriceLog{Price: "2000"})
+	thirtyMinutesAgo := time.Now().Add(time.Duration(-30) * time.Minute)
+	currencyPriceLogRepoStub.AddLog(&models.CurrencyPriceLog{
+		Currency:  "BTC",
+		Price:     "10000",
+		Timestamp: thirtyMinutesAgo,
+	})
+
+	// When
+	// Then
+	if true == ShouldAlertUser(targetAlert) {
+		t.Fail()
+	}
+}
+
+func TestTargetAlertSuccess(t *testing.T) {
+	// Given
+	targetAlert := &models.Alert{
+		Currency:  "BTC",
+		Frequency: models.OneTime,
+		Price:     "20000",
+		TradePair: "BTC/USD",
+		Type:      models.TargetAlert,
+	}
+	thirtyMinutesAgo := time.Now().Add(time.Duration(-30) * time.Minute)
+	currencyPriceLogRepoStub.AddLog(&models.CurrencyPriceLog{
+		Currency:  "BTC",
+		Price:     "20000",
+		Timestamp: thirtyMinutesAgo,
+	})
 
 	// When
 	// Then

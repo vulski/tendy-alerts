@@ -22,6 +22,7 @@ const (
 )
 
 type Alert struct {
+	Currency string
 	Price string
 	PercentageChange string
 	Type AlertType
