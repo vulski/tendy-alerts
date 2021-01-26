@@ -4,7 +4,7 @@ import "time"
 
 type CurrencyPriceLog struct {
 	Currency  string `json:"stub"`
-	Price     string `json:"price"`
+	Price     float64 `json:"price"`
 	Timestamp time.Time
 }
 
