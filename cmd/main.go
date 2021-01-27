@@ -24,7 +24,7 @@ func main() {
 		Comparison:           tendy_alerts.GreaterThanComparison,
 		TradePair:            "BTC/USD",
 		Active:               true,
-		NotificationSettings: tendy_alerts.NotificationSetting{Type: tendy_alerts.EmailNotification},
+		NotificationSettings: tendy_alerts.NotificationSettings{Type: tendy_alerts.EmailNotification},
 	}
 	alertRepo := tendy_alerts.AlertRepositoryInMem{Alerts: []tendy_alerts.Alert{targetAlert}}
 	priceChecker := manager.NewPriceChecker(notifiers.NewNotifierFactory(), &alertRepo)

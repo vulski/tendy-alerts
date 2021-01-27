@@ -1,8 +1,6 @@
 package notifiers
 
-import (
-	tendy_alerts "github.com/vulski/tendy-alerts"
-)
+import tendy_alerts "github.com/vulski/tendy-alerts"
 
 type EmailNotifier struct {
 }

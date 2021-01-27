@@ -1,5 +1,7 @@
 package tendy_alerts
 
+import "time"
+
 type AlertComparison string
 type AlertFrequency string
 type AlertType string
@@ -21,7 +23,10 @@ const (
 )
 
 type Alert struct {
-	Entity
+	ID        uint
+	CreatedAt time.Time
+	UpdatedAt time.Time
+	DeletedAt            time.Time
 	Currency             string
 	Price                float64
 	PercentageChange     float64
@@ -31,7 +36,7 @@ type Alert struct {
 	TradePair            string
 	Active               bool
 	UserId               uint
-	NotificationSettings NotificationSetting
+	NotificationSettings NotificationSettings
 }
 
 //go:generate mockgen -destination=mocks/mock_alert_repository.go -package=mocks . AlertRepository

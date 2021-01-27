@@ -2,22 +2,22 @@ package notifiers
 
 import (
 	"errors"
-	tendy "github.com/vulski/tendy-alerts"
+	"github.com/vulski/tendy-alerts"
 )
 
-type NotifierFactory struct {
-	notifiers map[tendy.NotificationType]tendy.Notifier
+type Factory struct {
+	notifiers map[tendy_alerts.NotificationType]tendy_alerts.Notifier
 }
 
-func NewNotifierFactory() *NotifierFactory {
-	factory := &NotifierFactory{}
-	factory.notifiers = make(map[tendy.NotificationType]tendy.Notifier)
-	factory.notifiers[tendy.EmailNotification] = NewEmailNotifier()
+func NewNotifierFactory() *Factory {
+	factory := &Factory{}
+	factory.notifiers = make(map[tendy_alerts.NotificationType]tendy_alerts.Notifier)
+	factory.notifiers[tendy_alerts.EmailNotification] = NewEmailNotifier()
 
 	return factory
 }
 
-func (nf *NotifierFactory) CreateNotifierFromType(notificationType tendy.NotificationType) (tendy.Notifier, error) {
+func (nf *Factory) CreateNotifierFromType(notificationType tendy_alerts.NotificationType) (tendy_alerts.Notifier, error) {
 	if notifier, ok := nf.notifiers[notificationType]; ok {
 		return notifier, nil
 	}

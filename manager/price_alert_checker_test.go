@@ -22,7 +22,7 @@ func TestItGetsActiveAlertsForTheGivenCurrencyPriceLogAndWillNotifyTheUser(t *te
 		Comparison:           tendy.GreaterThanComparison,
 		TradePair:            "BTC/USD",
 		Active:               true,
-		NotificationSettings: tendy.NotificationSetting{Type: tendy.EmailNotification},
+		NotificationSettings: tendy.NotificationSettings{Type: tendy.EmailNotification},
 	}
 	targetAlert.ID = 3
 
@@ -59,7 +59,7 @@ func TestItWillNotNotifyTheUserIfItShouldNot(t *testing.T) {
 		Comparison:           tendy.LessThanComparison,
 		TradePair:            "BTC/USD",
 		Active:               true,
-		NotificationSettings: tendy.NotificationSetting{Type: tendy.EmailNotification},
+		NotificationSettings: tendy.NotificationSettings{Type: tendy.EmailNotification},
 	}
 	targetAlert.ID = 3
 

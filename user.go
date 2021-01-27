@@ -1,7 +1,6 @@
 package tendy_alerts
 
 type User struct {
-	Entity
 	Username string
 	Alerts   []Alert
 }

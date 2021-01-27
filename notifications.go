@@ -1,5 +1,9 @@
 package tendy_alerts
 
+import (
+	"time"
+)
+
 //go:generate mockgen -destination=mocks/mock_notifier.go -package=mocks . Notifier
 type Notifier interface {
 	NotifyUser(currencyLog PriceSnapshot, alert Alert) error
@@ -14,14 +18,17 @@ type NotificationType string
 
 const EmailNotification NotificationType = "email"
 
-type NotificationSetting struct {
-	Entity
-	Type    NotificationType
-	UserId  uint
-	AlertId uint
+type NotificationSettings struct {
+	ID        uint
+	CreatedAt time.Time
+	UpdatedAt time.Time
+	DeletedAt time.Time
+	Type      NotificationType
+	UserId    uint
+	AlertId   uint
 }
 
-//go:generate mockgen -destination=mocks/mock_notification_setting_repository.go -package=mocks . NotificationSettingRepository
-type NotificationSettingRepository interface {
-	GetForAlertId(id uint) (NotificationSetting, error)
+//go:generate mockgen -destination=mocks/mock_notification_setting_repository.go -package=mocks . NotificationSettingsRepository
+type NotificationSettingsRepository interface {
+	GetForAlertId(id uint) (NotificationSettings, error)
 }
