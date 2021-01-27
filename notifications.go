@@ -1,5 +1,15 @@
 package tendy_alerts
 
+//go:generate mockgen -destination=mocks/mock_notifier.go -package=mocks . Notifier
+type Notifier interface {
+	NotifyUser(currencyLog CurrencyPriceLog, alert Alert) error
+}
+
+//go:generate mockgen -destination=mocks/mock_notifier_factory.go -package=mocks . NotifierFactory
+type NotifierFactory interface {
+	CreateNotifierFromType(notificationType NotificationType) (Notifier, error)
+}
+
 type NotificationType string
 
 const EmailNotification NotificationType = "email"
