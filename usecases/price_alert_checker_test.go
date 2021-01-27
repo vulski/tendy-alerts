@@ -3,7 +3,6 @@ package usecases
 import (
 	"github.com/golang/mock/gomock"
 	tendy "github.com/vulski/tendy-alerts"
-	"github.com/vulski/tendy-alerts/enums"
 	"github.com/vulski/tendy-alerts/mocks"
 	"testing"
 )
@@ -18,12 +17,12 @@ func TestItGetsActiveAlertsForTheGivenCurrencyPriceLogAndWillNotifyTheUser(t *te
 		Currency:             "BTC",
 		Price:                10000,
 		PercentageChange:     0,
-		Type:                 enums.AlertType_TARGET_ALERT,
-		Frequency:            enums.AlertFrequency_ONE_TIME,
-		Comparison:           enums.AlertComparison_GREATER_THAN,
+		Type:                 tendy.TargetAlert,
+		Frequency:            tendy.OneTimeFrequency,
+		Comparison:           tendy.GreaterThanComparison,
 		TradePair:            "BTC/USD",
 		Active:               true,
-		NotificationSettings: tendy.NotificationSetting{Type: enums.NotificationType_EMAIL},
+		NotificationSettings: tendy.NotificationSetting{Type: tendy.EmailNotification},
 	}
 	targetAlert.ID = 3
 
@@ -36,7 +35,7 @@ func TestItGetsActiveAlertsForTheGivenCurrencyPriceLogAndWillNotifyTheUser(t *te
 	notifierMock := mocks.NewMockNotifier(ctrl)
 	notifierMock.EXPECT().NotifyUser(latestPrice, targetAlert).Return(nil).Times(1)
 	notifierFactoryMock := mocks.NewMockNotifierFactory(ctrl)
-	notifierFactoryMock.EXPECT().CreateNotifierFromType(enums.NotificationType_EMAIL).Return(notifierMock, nil).Times(1)
+	notifierFactoryMock.EXPECT().CreateNotifierFromType(tendy.EmailNotification).Return(notifierMock, nil).Times(1)
 
 	sut := NewPriceNotificationManager(notifierFactoryMock, alertRepoMock)
 
@@ -55,12 +54,12 @@ func TestItWillNotNotifyTheUserIfItShouldNot(t *testing.T) {
 		Currency:             "BTC",
 		Price:                10000,
 		PercentageChange:     0,
-		Type:                 enums.AlertType_TARGET_ALERT,
-		Frequency:            enums.AlertFrequency_ONE_TIME,
-		Comparison:           enums.AlertComparison_LESS_THAN,
+		Type:                 tendy.TargetAlert,
+		Frequency:            tendy.OneTimeFrequency,
+		Comparison:           tendy.LessThanComparison,
 		TradePair:            "BTC/USD",
 		Active:               true,
-		NotificationSettings: tendy.NotificationSetting{Type: enums.NotificationType_EMAIL},
+		NotificationSettings: tendy.NotificationSetting{Type: tendy.EmailNotification},
 	}
 	targetAlert.ID = 3
 

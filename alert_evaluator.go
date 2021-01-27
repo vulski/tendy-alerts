@@ -1,9 +1,5 @@
 package tendy_alerts
 
-import (
-	"github.com/vulski/tendy-alerts/enums"
-)
-
 type AlertEvaluator struct {
 }
 
@@ -16,8 +12,8 @@ func (a *AlertEvaluator) ShouldAlertUser(latestPrice CurrencyPriceLog, alert Ale
 		return false
 	}
 
-	if alert.Type == enums.AlertType_TARGET_ALERT {
-		if alert.Comparison == enums.AlertComparison_LESS_THAN {
+	if alert.Type == TargetAlert {
+		if alert.Comparison == LessThanComparison {
 			return latestPrice.Price < alert.Price
 		}
 		return latestPrice.Price > alert.Price

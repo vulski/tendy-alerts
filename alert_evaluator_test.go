@@ -1,7 +1,6 @@
 package tendy_alerts
 
 import (
-	"github.com/vulski/tendy-alerts/enums"
 	"testing"
 )
 
@@ -29,9 +28,9 @@ func TestWillIgnoreInActiveAlerts(t *testing.T) {
 	targetAlert := Alert{
 		Currency:   "BTC",
 		Price:      20000,
-		Type:       enums.AlertType_TARGET_ALERT,
-		Frequency:  enums.AlertFrequency_ONE_TIME,
-		Comparison: enums.AlertComparison_LESS_THAN,
+		Type:       TargetAlert,
+		Frequency:  OneTimeFrequency,
+		Comparison: LessThanComparison,
 		TradePair:  "BTC/USD",
 		Active:     false,
 	}
@@ -49,9 +48,9 @@ func TestTargetAlertLessThanComparisonShouldPass(t *testing.T) {
 	targetAlert := Alert{
 		Currency:   "BTC",
 		Price:      20001,
-		Type:       enums.AlertType_TARGET_ALERT,
-		Frequency:  enums.AlertFrequency_ONE_TIME,
-		Comparison: enums.AlertComparison_LESS_THAN,
+		Type:       TargetAlert,
+		Frequency:  OneTimeFrequency,
+		Comparison: LessThanComparison,
 		TradePair:  "BTC/USD",
 		Active:     true,
 	}
@@ -69,9 +68,9 @@ func TestTargetAlertGreaterThanComparisonShouldPass(t *testing.T) {
 	targetAlert := Alert{
 		Currency:   "BTC",
 		Price:      19999,
-		Type:       enums.AlertType_TARGET_ALERT,
-		Frequency:  enums.AlertFrequency_ONE_TIME,
-		Comparison: enums.AlertComparison_GREATER_THAN,
+		Type:       TargetAlert,
+		Frequency:  OneTimeFrequency,
+		Comparison: GreaterThanComparison,
 		TradePair:  "BTC/USD",
 		Active:     true,
 	}
@@ -89,9 +88,9 @@ func TestTargetAlertGreaterThanComparisonShouldFail(t *testing.T) {
 	targetAlert := Alert{
 		Currency:   "BTC",
 		Price:      20000,
-		Type:       enums.AlertType_TARGET_ALERT,
-		Frequency:  enums.AlertFrequency_ONE_TIME,
-		Comparison: enums.AlertComparison_GREATER_THAN,
+		Type:       TargetAlert,
+		Frequency:  OneTimeFrequency,
+		Comparison: GreaterThanComparison,
 		TradePair:  "BTC/USD",
 		Active:     true,
 	}

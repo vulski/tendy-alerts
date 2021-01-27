@@ -1,13 +1,13 @@
 package tendy_alerts
 
-import (
-	"github.com/vulski/tendy-alerts/enums"
-)
+type NotificationType string
+
+const EmailNotification NotificationType = "email"
 
 type NotificationSetting struct {
 	Entity
-	Type enums.NotificationType
-	UserId uint
+	Type    NotificationType
+	UserId  uint
 	AlertId uint
 }
 

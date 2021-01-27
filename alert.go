@@ -1,7 +1,23 @@
 package tendy_alerts
 
-import (
-	"github.com/vulski/tendy-alerts/enums"
+type AlertComparison string
+type AlertFrequency string
+type AlertType string
+
+const (
+	GreaterThanComparison AlertComparison = "greater_than"
+	LessThanComparison    AlertComparison = "less_than"
+
+	OneTimeFrequency        AlertFrequency = "one_time"
+	FifteenMinuteFrequency                 = "15m"
+	ThirtyMinuteFrequency                  = "30m"
+	OneHourFrequency                       = "1hr"
+	SixHourFrequency                       = "6hr"
+	TwelveHourFrequency                    = "12hr"
+	TwentyFourHourFrequency                = "24hr"
+
+	TargetAlert           AlertType = "target_alert"
+	PercentageChangeAlert           = "percentage_change_alert"
 )
 
 type Alert struct {
@@ -9,9 +25,9 @@ type Alert struct {
 	Currency             string
 	Price                float64
 	PercentageChange     float64
-	Type                 enums.AlertType
-	Frequency            enums.AlertFrequency
-	Comparison           enums.AlertComparison
+	Type                 AlertType
+	Frequency            AlertFrequency
+	Comparison           AlertComparison
 	TradePair            string
 	Active               bool
 	UserId               uint
