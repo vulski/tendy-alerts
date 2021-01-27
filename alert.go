@@ -6,15 +6,16 @@ import (
 
 type Alert struct {
 	Entity
-	Currency         string
-	Price            float64
-	PercentageChange float64
-	Type             enums.AlertType
-	Frequency        enums.AlertFrequency
-	Comparison       enums.AlertComparison
-	TradePair        string
-	Active           bool
-	UserId           uint
+	Currency             string
+	Price                float64
+	PercentageChange     float64
+	Type                 enums.AlertType
+	Frequency            enums.AlertFrequency
+	Comparison           enums.AlertComparison
+	TradePair            string
+	Active               bool
+	UserId               uint
+	NotificationSettings NotificationSetting
 }
 
 //go:generate mockgen -destination=mocks/mock_alert_repository.go -package=mocks . AlertRepository
