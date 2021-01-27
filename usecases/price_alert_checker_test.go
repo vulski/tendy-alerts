@@ -1,11 +1,11 @@
 package usecases
 
 import (
-	tendy_alerts "github.com/vulski/tendy-alerts"
+	"github.com/golang/mock/gomock"
+	tendy "github.com/vulski/tendy-alerts"
 	"github.com/vulski/tendy-alerts/enums"
 	"github.com/vulski/tendy-alerts/mocks"
 	"testing"
-	"github.com/golang/mock/gomock"
 )
 
 func TestItPullsUsers(t *testing.T) {
@@ -16,12 +16,12 @@ func TestItPullsUsers(t *testing.T) {
 	userRepoMock := mocks.NewMockUserRepository(ctrl)
 
 	// There is active users
-	user := &tendy_alerts.User{Username: "test"}
+	user := &tendy.User{Username: "test"}
 	user.ID = 1
-	userRepoMock.EXPECT().GetAllActive().Return([]*tendy_alerts.User{user}, nil)
+	userRepoMock.EXPECT().GetAllActive().Return([]*tendy.User{user}, nil)
 
 	// And that user has active Alerts.
-	targetAlert := tendy_alerts.Alert{
+	targetAlert := tendy.Alert{
 		Currency:         "BTC",
 		Price:            10000,
 		PercentageChange: 0,
@@ -32,14 +32,23 @@ func TestItPullsUsers(t *testing.T) {
 		Active:           true,
 		UserId:           user.ID,
 	}
+	targetAlert.ID = 3
 	alertRepoMock := mocks.NewMockAlertRepository(ctrl)
-	alertRepoMock.EXPECT().GetAllForUserIDs([]uint{user.ID}).Return([]tendy_alerts.Alert{targetAlert}, nil)
+	alertRepoMock.EXPECT().GetAllForUserIDs([]uint{user.ID}).Return([]tendy.Alert{targetAlert}, nil)
 
 	// Then the User should be notified.
-	notifierMock := mocks.NewMockNotifier(ctrl)
-	notifierMock.EXPECT().NotifyUser(tendy_alerts.CurrencyPriceLog{}, targetAlert).Return(nil)
+	notificationSettingsRepoMock := mocks.NewMockNotificationSettingRepository(ctrl)
+	notificationSettingsRepoMock.EXPECT().GetForAlertId(targetAlert.ID).Return(
+		tendy.NotificationSetting{Type: enums.NotificationType_EMAIL},
+		nil,
+	)
 
-	sut := NewPriceNotificationManager(userRepoMock, alertRepoMock, notifierMock)
+	notifierMock := mocks.NewMockNotifier(ctrl)
+	notifierMock.EXPECT().NotifyUser(tendy.CurrencyPriceLog{}, targetAlert).Return(nil)
+	notifierFactoryMock := mocks.NewMockNotifierFactory(ctrl)
+	notifierFactoryMock.EXPECT().CreateNotifierFromType(enums.NotificationType_EMAIL).Return(notifierMock, nil)
+
+	sut := NewPriceNotificationManager(notifierFactoryMock, userRepoMock, alertRepoMock, notificationSettingsRepoMock)
 
 	// When we check the User's Alerts
 	sut.Run()

@@ -11,14 +11,7 @@ type NotificationSetting struct {
 	AlertId uint
 }
 
+//go:generate mockgen -destination=mocks/mock_notification_setting_repository.go -package=mocks . NotificationSettingRepository
 type NotificationSettingRepository interface {
 	GetForAlertId(id uint) (NotificationSetting, error)
-}
-
-type NotificationSettingRepoMock struct {
-	NotSetting NotificationSetting
-}
-
-func (u *NotificationSettingRepoMock) GetForAlertId(id uint) (NotificationSetting, error) {
-	return u.NotSetting, nil
 }

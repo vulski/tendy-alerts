@@ -13,19 +13,20 @@ import (
 // Update this User and User Alert list regularly
 
 type PriceAlertChecker struct {
-	userRepository          tendy_alerts.UserRepository
-	alertRepository         tendy_alerts.AlertRepository
-	notifier                tendy_alerts.Notifier
+	notifierFactory tendy_alerts.NotifierFactory
+	userRepository  tendy_alerts.UserRepository
+	alertRepository tendy_alerts.AlertRepository
+	notifSettRepo   tendy_alerts.NotificationSettingRepository
 
-	users                   []*tendy_alerts.User
-	alertEval               tendy_alerts.AlertEvaluator
+	alertEval tendy_alerts.AlertEvaluator
 }
 
-func NewPriceNotificationManager(userRepo tendy_alerts.UserRepository, alertRepo tendy_alerts.AlertRepository, notifier tendy_alerts.Notifier) *PriceAlertChecker {
+func NewPriceNotificationManager(notifierFactory tendy_alerts.NotifierFactory, userRepo tendy_alerts.UserRepository, alertRepo tendy_alerts.AlertRepository, notifiSettRepo tendy_alerts.NotificationSettingRepository) *PriceAlertChecker {
 	return &PriceAlertChecker{
-		userRepository: userRepo,
+		notifierFactory: notifierFactory,
+		userRepository:  userRepo,
 		alertRepository: alertRepo,
-		notifier: notifier,
+		notifSettRepo:   notifiSettRepo,
 	}
 }
 
@@ -44,10 +45,17 @@ func (p *PriceAlertChecker) Run() error {
 		return err
 	}
 
+	// TODO: PriceFetcher
 	latestPrice := tendy_alerts.CurrencyPriceLog{}
+
 	for _, alert := range alerts {
 		if p.alertEval.ShouldAlertUser(latestPrice, alert) {
-			err = p.notifier.NotifyUser(latestPrice, alert)
+			notificationSettings, err := p.notifSettRepo.GetForAlertId(alert.ID)
+			if nil != err {
+				// TODO:
+			}
+			notifier, err := p.notifierFactory.CreateNotifierFromType(notificationSettings.Type)
+			err = notifier.NotifyUser(latestPrice, alert)
 			if err != nil {
 				// TODO:
 			}
