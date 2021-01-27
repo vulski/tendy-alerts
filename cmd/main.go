@@ -3,10 +3,10 @@ package main
 import (
 	"fmt"
 	ws "github.com/gorilla/websocket"
-	"github.com/preichenberger/go-coinbasepro/v2"
 	"github.com/vulski/tendy-alerts"
 	"github.com/vulski/tendy-alerts/enums"
-	"strconv"
+	"github.com/vulski/tendy-alerts/usecases"
+	"github.com/vulski/tendy-alerts/usecases/price_feeds"
 )
 
 var alerts []*tendy_alerts.Alert
@@ -23,50 +23,29 @@ func main() {
 		Price:      20000,
 		Type:       enums.AlertType_TARGET_ALERT,
 		Frequency:  enums.AlertFrequency_ONE_TIME,
-		Comparison: enums.AlertComparison_LESS_THAN,
+		Comparison: enums.AlertComparison_GREATER_THAN,
 		TradePair:  "BTC/USD",
 		Active:     true,
+		NotificationSettings: tendy_alerts.NotificationSetting{Type: enums.NotificationType_EMAIL},
 	}
-	alerts = append(alerts, &targetAlert)
-	var wsDialer ws.Dialer
-	wsConn, _, err := wsDialer.Dial("wss://ws-feed.pro.coinbase.com", nil)
+	coinbaseFeed := price_feeds.NewCoinBasePriceFeed()
+	btcChan, err := coinbaseFeed.GetCurrencyFeed(targetAlert.Currency)
+	alertRepo := tendy_alerts.AlertRepositoryInMem{Alerts: []tendy_alerts.Alert{targetAlert}}
+	priceChecker := usecases.NewPriceNotificationManager(usecases.NewNotifierFactory(), &alertRepo)
 	if err != nil {
-		println(err.Error())
+		fmt.Println(err)
+		return
 	}
-
-	subscribe := coinbasepro.Message{
-		Type: "subscribe",
-		Channels: []coinbasepro.MessageChannel{
-			{
-				Name: "ticker",
-				ProductIds: []string{
-					"BTC-USD",
-				},
-			},
-		},
+	if btcChan == nil {
+		panic("ahh")
+		return
 	}
-	if err := wsConn.WriteJSON(subscribe); err != nil {
-		println(err.Error())
-	}
+	coinbaseFeed.StartFeed()
 	for {
-		message := coinbasepro.Message{}
-		if err := wsConn.ReadJSON(&message); err != nil {
-			println(err.Error())
-			break
-		}
-		price, err := strconv.ParseFloat(message.BestBid, 64)
-		if nil != err {
-			continue
-		}
-		latestPrice := tendy_alerts.CurrencyPriceLog{Price: price}
-		fmt.Println(latestPrice.Price)
-
-		for _, alert := range alerts {
-			fmt.Println("Evaluating ")
-			if alertEval.ShouldAlertUser(latestPrice, *alert) {
-				fmt.Println("BUYBUYBUY")
-				alert.Active = false
-			}
+		select {
+		case latestPrice := <-btcChan:
+			priceChecker.CheckPrice(latestPrice)
+			fmt.Println(latestPrice)
 		}
 	}
 }

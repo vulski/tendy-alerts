@@ -1,7 +1,6 @@
 package notifiers
 
 import (
-	"fmt"
 	tendy_alerts "github.com/vulski/tendy-alerts"
 )
 
@@ -13,6 +12,6 @@ func NewEmailNotifier() *EmailNotifier {
 }
 
 func (en *EmailNotifier) NotifyUser(currencyLog tendy_alerts.CurrencyPriceLog, alert tendy_alerts.Alert) error {
-	fmt.Println("I sent an email!")
+	panic("I'm an email!")
 	return nil
 }

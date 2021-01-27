@@ -20,5 +20,13 @@ type Alert struct {
 
 //go:generate mockgen -destination=mocks/mock_alert_repository.go -package=mocks . AlertRepository
 type AlertRepository interface {
-	GetAllForUserIDs(userIds []uint) ([]Alert, error)
+	GetActiveAlertsForCurrency(currency string) ([]Alert, error)
+}
+
+type AlertRepositoryInMem struct {
+	Alerts []Alert
+}
+
+func (r *AlertRepositoryInMem) GetActiveAlertsForCurrency(currency string) ([]Alert, error) {
+	return r.Alerts, nil
 }

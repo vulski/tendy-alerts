@@ -48,14 +48,14 @@ func TestTargetAlertLessThanComparisonShouldPass(t *testing.T) {
 	// Given
 	targetAlert := Alert{
 		Currency:   "BTC",
-		Price:      20000,
+		Price:      20001,
 		Type:       enums.AlertType_TARGET_ALERT,
 		Frequency:  enums.AlertFrequency_ONE_TIME,
 		Comparison: enums.AlertComparison_LESS_THAN,
 		TradePair:  "BTC/USD",
 		Active:     true,
 	}
-	latestPrice := CurrencyPriceLog{Price: 20001}
+	latestPrice := CurrencyPriceLog{Price: 20000}
 
 	// When
 	// Then
@@ -68,14 +68,14 @@ func TestTargetAlertGreaterThanComparisonShouldPass(t *testing.T) {
 	// Given
 	targetAlert := Alert{
 		Currency:   "BTC",
-		Price:      20000,
+		Price:      19999,
 		Type:       enums.AlertType_TARGET_ALERT,
 		Frequency:  enums.AlertFrequency_ONE_TIME,
 		Comparison: enums.AlertComparison_GREATER_THAN,
 		TradePair:  "BTC/USD",
 		Active:     true,
 	}
-	latestPrice := CurrencyPriceLog{Price: 19999}
+	latestPrice := CurrencyPriceLog{Price: 20000}
 
 	// When
 	// Then
@@ -95,7 +95,7 @@ func TestTargetAlertGreaterThanComparisonShouldFail(t *testing.T) {
 		TradePair:  "BTC/USD",
 		Active:     true,
 	}
-	latestPrice := CurrencyPriceLog{Price: 20001}
+	latestPrice := CurrencyPriceLog{Price: 19999}
 
 	// When
 	// Then

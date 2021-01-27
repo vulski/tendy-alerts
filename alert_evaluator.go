@@ -18,9 +18,9 @@ func (a *AlertEvaluator) ShouldAlertUser(latestPrice CurrencyPriceLog, alert Ale
 
 	if alert.Type == enums.AlertType_TARGET_ALERT {
 		if alert.Comparison == enums.AlertComparison_LESS_THAN {
-			return latestPrice.Price > alert.Price
+			return latestPrice.Price < alert.Price
 		}
-		return latestPrice.Price < alert.Price
+		return latestPrice.Price > alert.Price
 	}
 	return false
 }
