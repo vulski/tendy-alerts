@@ -1,4 +1,4 @@
-package usecases
+package manager
 
 import (
 	"github.com/vulski/tendy-alerts"
@@ -10,7 +10,7 @@ type PriceAlertChecker struct {
 	alertEval       tendy_alerts.AlertEvaluator
 }
 
-func NewPriceNotificationManager(notifierFactory tendy_alerts.NotifierFactory, alertRepo tendy_alerts.AlertRepository) *PriceAlertChecker {
+func NewPriceAlertChecker(notifierFactory tendy_alerts.NotifierFactory, alertRepo tendy_alerts.AlertRepository) *PriceAlertChecker {
 	return &PriceAlertChecker{
 		notifierFactory: notifierFactory,
 		alertRepo:       alertRepo,

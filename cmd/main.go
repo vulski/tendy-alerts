@@ -4,8 +4,9 @@ import (
 	"fmt"
 	ws "github.com/gorilla/websocket"
 	"github.com/vulski/tendy-alerts"
-	"github.com/vulski/tendy-alerts/usecases"
-	"github.com/vulski/tendy-alerts/usecases/price_feeds"
+	"github.com/vulski/tendy-alerts/manager"
+	"github.com/vulski/tendy-alerts/notifiers"
+	"github.com/vulski/tendy-alerts/price_feeds"
 )
 
 var alerts []*tendy_alerts.Alert
@@ -30,7 +31,7 @@ func main() {
 	coinbaseFeed := price_feeds.NewCoinBasePriceFeed()
 	btcChan, err := coinbaseFeed.GetCurrencyFeed(targetAlert.Currency)
 	alertRepo := tendy_alerts.AlertRepositoryInMem{Alerts: []tendy_alerts.Alert{targetAlert}}
-	priceChecker := usecases.NewPriceNotificationManager(usecases.NewNotifierFactory(), &alertRepo)
+	priceChecker := manager.NewPriceAlertChecker(notifiers.NewNotifierFactory(), &alertRepo)
 	if err != nil {
 		fmt.Println(err)
 		return

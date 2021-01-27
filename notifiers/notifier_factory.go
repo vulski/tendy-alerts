@@ -1,9 +1,8 @@
-package usecases
+package notifiers
 
 import (
 	"errors"
 	tendy "github.com/vulski/tendy-alerts"
-	"github.com/vulski/tendy-alerts/usecases/notifiers"
 )
 
 type NotifierFactory struct {
@@ -13,7 +12,7 @@ type NotifierFactory struct {
 func NewNotifierFactory() *NotifierFactory {
 	factory := &NotifierFactory{}
 	factory.notifiers = make(map[tendy.NotificationType]tendy.Notifier)
-	factory.notifiers[tendy.EmailNotification] = notifiers.NewEmailNotifier()
+	factory.notifiers[tendy.EmailNotification] = NewEmailNotifier()
 
 	return factory
 }

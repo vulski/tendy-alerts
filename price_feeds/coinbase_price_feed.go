@@ -14,7 +14,7 @@ type CoinBasePriceFeed struct {
 	running           bool
 }
 
-func NewCoinBasePriceFeed() CoinBasePriceFeed{
+func NewCoinBasePriceFeed() CoinBasePriceFeed {
 	return CoinBasePriceFeed{watchedCurrencies: make(map[string]chan tendy_alerts.PriceSnapshot)}
 }
 
