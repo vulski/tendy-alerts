@@ -11,14 +11,14 @@ func init() {
 }
 
 type CurrencyPriceLogRepoStub struct {
-	Logs []*CurrencyPriceLog
+	Logs []*PriceSnapshot
 }
 
-func (r *CurrencyPriceLogRepoStub) AddLog(log *CurrencyPriceLog) {
+func (r *CurrencyPriceLogRepoStub) AddLog(log *PriceSnapshot) {
 	r.Logs = append(r.Logs, log)
 }
 
-func (r *CurrencyPriceLogRepoStub) GetWithConstraints(constraints CurrencyPriceLogRepoConstraints) ([]*CurrencyPriceLog, error) {
+func (r *CurrencyPriceLogRepoStub) GetWithConstraints(constraints CurrencyPriceLogRepoConstraints) ([]*PriceSnapshot, error) {
 	constraints.Name = ""
 	return r.Logs, nil
 }
@@ -34,7 +34,7 @@ func TestWillIgnoreInActiveAlerts(t *testing.T) {
 		TradePair:  "BTC/USD",
 		Active:     false,
 	}
-	latestPrice := CurrencyPriceLog{Price: 20001}
+	latestPrice := PriceSnapshot{Price: 20001}
 
 	// When
 	// Then
@@ -54,7 +54,7 @@ func TestTargetAlertLessThanComparisonShouldPass(t *testing.T) {
 		TradePair:  "BTC/USD",
 		Active:     true,
 	}
-	latestPrice := CurrencyPriceLog{Price: 20000}
+	latestPrice := PriceSnapshot{Price: 20000}
 
 	// When
 	// Then
@@ -74,7 +74,7 @@ func TestTargetAlertGreaterThanComparisonShouldPass(t *testing.T) {
 		TradePair:  "BTC/USD",
 		Active:     true,
 	}
-	latestPrice := CurrencyPriceLog{Price: 20000}
+	latestPrice := PriceSnapshot{Price: 20000}
 
 	// When
 	// Then
@@ -94,7 +94,7 @@ func TestTargetAlertGreaterThanComparisonShouldFail(t *testing.T) {
 		TradePair:  "BTC/USD",
 		Active:     true,
 	}
-	latestPrice := CurrencyPriceLog{Price: 19999}
+	latestPrice := PriceSnapshot{Price: 19999}
 
 	// When
 	// Then

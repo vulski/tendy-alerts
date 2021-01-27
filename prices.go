@@ -2,7 +2,12 @@ package tendy_alerts
 
 import "time"
 
-type CurrencyPriceLog struct {
+type PriceFeed interface {
+	GetCurrencyFeed(currency string) (*chan PriceSnapshot, error)
+	StartFeed() error
+	StopFeed() error
+}
+type PriceSnapshot struct {
 	Currency  string  `json:"stub"`
 	Price     float64 `json:"price"`
 	Exchange  string  `json:"exchange"`
@@ -16,5 +21,5 @@ type CurrencyPriceLogRepoConstraints struct {
 }
 
 type CurrencyPriceLogRepository interface {
-	GetWithConstraints(constraints CurrencyPriceLogRepoConstraints) ([]*CurrencyPriceLog, error)
+	GetWithConstraints(constraints CurrencyPriceLogRepoConstraints) ([]*PriceSnapshot, error)
 }

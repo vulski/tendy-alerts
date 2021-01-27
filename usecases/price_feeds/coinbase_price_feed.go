@@ -10,15 +10,15 @@ import (
 
 type CoinBasePriceFeed struct {
 	wsConn            *ws.Conn
-	watchedCurrencies map[string]chan tendy_alerts.CurrencyPriceLog
+	watchedCurrencies map[string]chan tendy_alerts.PriceSnapshot
 	running           bool
 }
 
 func NewCoinBasePriceFeed() CoinBasePriceFeed{
-	return CoinBasePriceFeed{watchedCurrencies: make(map[string]chan tendy_alerts.CurrencyPriceLog)}
+	return CoinBasePriceFeed{watchedCurrencies: make(map[string]chan tendy_alerts.PriceSnapshot)}
 }
 
-func (c *CoinBasePriceFeed) GetCurrencyFeed(currency string) (chan tendy_alerts.CurrencyPriceLog, error) {
+func (c *CoinBasePriceFeed) GetCurrencyFeed(currency string) (chan tendy_alerts.PriceSnapshot, error) {
 	err := c.subscribeToCoin(currency)
 	if err != nil {
 		return nil, err
@@ -64,7 +64,7 @@ func (c *CoinBasePriceFeed) subscribeToCoin(coin string) error {
 	if err := c.wsConn.WriteJSON(subscribe); err != nil {
 		return err
 	}
-	c.watchedCurrencies[coin] = make(chan tendy_alerts.CurrencyPriceLog)
+	c.watchedCurrencies[coin] = make(chan tendy_alerts.PriceSnapshot)
 
 	return nil
 }
@@ -83,7 +83,7 @@ func (c *CoinBasePriceFeed) digestCoins() {
 		currency := strings.Split(message.ProductID, "-")
 		if len(currency) > 0 {
 			currency := currency[0]
-			latestPrice := tendy_alerts.CurrencyPriceLog{Price: price, Currency: currency}
+			latestPrice := tendy_alerts.PriceSnapshot{Price: price, Currency: currency}
 			c.watchedCurrencies[currency] <- latestPrice
 		}
 	}

@@ -54,7 +54,7 @@ func NewAlertEvaluator() *AlertEvaluator {
 	return &AlertEvaluator{}
 }
 
-func (a *AlertEvaluator) ShouldAlertUser(latestPrice CurrencyPriceLog, alert Alert) bool {
+func (a *AlertEvaluator) ShouldAlertUser(latestPrice PriceSnapshot, alert Alert) bool {
 	if !alert.Active {
 		return false
 	}

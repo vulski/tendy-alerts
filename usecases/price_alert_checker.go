@@ -20,7 +20,7 @@ func NewPriceNotificationManager(notifierFactory tendy_alerts.NotifierFactory, a
 // Get active alerts for the given currency,
 // Check alerts based on the latest prices,
 // If Alert is Valid, notify user based on User settings.
-func (p *PriceAlertChecker) CheckPrice(price tendy_alerts.CurrencyPriceLog) error {
+func (p *PriceAlertChecker) CheckPrice(price tendy_alerts.PriceSnapshot) error {
 	alerts, err := p.alertRepo.GetActiveAlertsForCurrency(price.Currency)
 	if err != nil {
 		// TODO:

@@ -26,7 +26,7 @@ func TestItGetsActiveAlertsForTheGivenCurrencyPriceLogAndWillNotifyTheUser(t *te
 	}
 	targetAlert.ID = 3
 
-	latestPrice := tendy.CurrencyPriceLog{Currency: "BTC", Price: 10001}
+	latestPrice := tendy.PriceSnapshot{Currency: "BTC", Price: 10001}
 	alerts := []tendy.Alert{targetAlert}
 	alertRepoMock := mocks.NewMockAlertRepository(ctrl)
 	alertRepoMock.EXPECT().GetActiveAlertsForCurrency(latestPrice.Currency).Return(alerts, nil).Times(1)
@@ -63,7 +63,7 @@ func TestItWillNotNotifyTheUserIfItShouldNot(t *testing.T) {
 	}
 	targetAlert.ID = 3
 
-	latestPrice := tendy.CurrencyPriceLog{Currency: "BTC", Price: 10001}
+	latestPrice := tendy.PriceSnapshot{Currency: "BTC", Price: 10001}
 	alerts := []tendy.Alert{targetAlert}
 	alertRepoMock := mocks.NewMockAlertRepository(ctrl)
 	alertRepoMock.EXPECT().GetActiveAlertsForCurrency(latestPrice.Currency).Return(alerts, nil).Times(1)
