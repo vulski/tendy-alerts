@@ -1,8 +1,7 @@
-package services
+package tendy_alerts
 
 import (
 	"github.com/vulski/tendy-alerts/enums"
-	"github.com/vulski/tendy-alerts/models"
 	"testing"
 )
 
@@ -13,21 +12,21 @@ func init() {
 }
 
 type CurrencyPriceLogRepoStub struct {
-	Logs []*models.CurrencyPriceLog
+	Logs []*CurrencyPriceLog
 }
 
-func (r *CurrencyPriceLogRepoStub) AddLog(log *models.CurrencyPriceLog) {
+func (r *CurrencyPriceLogRepoStub) AddLog(log *CurrencyPriceLog) {
 	r.Logs = append(r.Logs, log)
 }
 
-func (r *CurrencyPriceLogRepoStub) GetWithConstraints(constraints models.CurrencyPriceLogRepoConstraints) ([]*models.CurrencyPriceLog, error) {
+func (r *CurrencyPriceLogRepoStub) GetWithConstraints(constraints CurrencyPriceLogRepoConstraints) ([]*CurrencyPriceLog, error) {
 	constraints.Name = ""
 	return r.Logs, nil
 }
 
 func TestWillIgnoreInActiveAlerts(t *testing.T) {
 	// Given
-	targetAlert := models.Alert{
+	targetAlert := Alert{
 		Currency:   "BTC",
 		Price:      20000,
 		Type:       enums.AlertType_TARGET_ALERT,
@@ -36,7 +35,7 @@ func TestWillIgnoreInActiveAlerts(t *testing.T) {
 		TradePair:  "BTC/USD",
 		Active:     false,
 	}
-	latestPrice := models.CurrencyPriceLog{Price: 20001}
+	latestPrice := CurrencyPriceLog{Price: 20001}
 
 	// When
 	// Then
@@ -47,7 +46,7 @@ func TestWillIgnoreInActiveAlerts(t *testing.T) {
 
 func TestTargetAlertLessThanComparisonShouldPass(t *testing.T) {
 	// Given
-	targetAlert := models.Alert{
+	targetAlert := Alert{
 		Currency:   "BTC",
 		Price:      20000,
 		Type:       enums.AlertType_TARGET_ALERT,
@@ -56,7 +55,7 @@ func TestTargetAlertLessThanComparisonShouldPass(t *testing.T) {
 		TradePair:  "BTC/USD",
 		Active:     true,
 	}
-	latestPrice := models.CurrencyPriceLog{Price: 20001}
+	latestPrice := CurrencyPriceLog{Price: 20001}
 
 	// When
 	// Then
@@ -67,7 +66,7 @@ func TestTargetAlertLessThanComparisonShouldPass(t *testing.T) {
 
 func TestTargetAlertGreaterThanComparisonShouldPass(t *testing.T) {
 	// Given
-	targetAlert := models.Alert{
+	targetAlert := Alert{
 		Currency:   "BTC",
 		Price:      20000,
 		Type:       enums.AlertType_TARGET_ALERT,
@@ -76,7 +75,7 @@ func TestTargetAlertGreaterThanComparisonShouldPass(t *testing.T) {
 		TradePair:  "BTC/USD",
 		Active:     true,
 	}
-	latestPrice := models.CurrencyPriceLog{Price: 19999}
+	latestPrice := CurrencyPriceLog{Price: 19999}
 
 	// When
 	// Then
@@ -87,7 +86,7 @@ func TestTargetAlertGreaterThanComparisonShouldPass(t *testing.T) {
 
 func TestTargetAlertGreaterThanComparisonShouldFail(t *testing.T) {
 	// Given
-	targetAlert := models.Alert{
+	targetAlert := Alert{
 		Currency:   "BTC",
 		Price:      20000,
 		Type:       enums.AlertType_TARGET_ALERT,
@@ -96,7 +95,7 @@ func TestTargetAlertGreaterThanComparisonShouldFail(t *testing.T) {
 		TradePair:  "BTC/USD",
 		Active:     true,
 	}
-	latestPrice := models.CurrencyPriceLog{Price: 20001}
+	latestPrice := CurrencyPriceLog{Price: 20001}
 
 	// When
 	// Then

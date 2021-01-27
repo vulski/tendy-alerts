@@ -4,22 +4,21 @@ import (
 	"fmt"
 	ws "github.com/gorilla/websocket"
 	"github.com/preichenberger/go-coinbasepro/v2"
+	"github.com/vulski/tendy-alerts"
 	"github.com/vulski/tendy-alerts/enums"
-	"github.com/vulski/tendy-alerts/models"
-	"github.com/vulski/tendy-alerts/services"
 	"strconv"
 )
 
-var alerts []*models.Alert
-var alertEval *services.AlertEvaluator
+var alerts []*tendy_alerts.Alert
+var alertEval *tendy_alerts.AlertEvaluator
 var wsConn *ws.Conn
 
 func init() {
-	alertEval = services.NewAlertEvaluator()
+	alertEval = tendy_alerts.NewAlertEvaluator()
 }
 
 func main() {
-	targetAlert := models.Alert{
+	targetAlert := tendy_alerts.Alert{
 		Currency:   "BTC",
 		Price:      20000,
 		Type:       enums.AlertType_TARGET_ALERT,
@@ -59,7 +58,7 @@ func main() {
 		if nil != err {
 			continue
 		}
-		latestPrice := models.CurrencyPriceLog{Price: price}
+		latestPrice := tendy_alerts.CurrencyPriceLog{Price: price}
 		fmt.Println(latestPrice.Price)
 
 		for _, alert := range alerts {

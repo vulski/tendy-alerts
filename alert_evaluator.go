@@ -1,8 +1,7 @@
-package services
+package tendy_alerts
 
 import (
 	"github.com/vulski/tendy-alerts/enums"
-	"github.com/vulski/tendy-alerts/models"
 )
 
 type AlertEvaluator struct {
@@ -12,7 +11,7 @@ func NewAlertEvaluator() *AlertEvaluator {
 	return &AlertEvaluator{}
 }
 
-func (a *AlertEvaluator) ShouldAlertUser(latestPrice models.CurrencyPriceLog, alert models.Alert) bool {
+func (a *AlertEvaluator) ShouldAlertUser(latestPrice CurrencyPriceLog, alert Alert) bool {
 	if !alert.Active {
 		return false
 	}

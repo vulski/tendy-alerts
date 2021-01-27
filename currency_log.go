@@ -1,4 +1,4 @@
-package models
+package tendy_alerts
 
 import "time"
 

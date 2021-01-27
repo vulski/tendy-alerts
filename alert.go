@@ -1,11 +1,11 @@
-package models
+package tendy_alerts
 
 import (
 	"github.com/vulski/tendy-alerts/enums"
-	"time"
 )
 
 type Alert struct {
+	Entity
 	Currency         string
 	Price            float64
 	PercentageChange float64
@@ -13,6 +13,17 @@ type Alert struct {
 	Frequency        enums.AlertFrequency
 	Comparison       enums.AlertComparison
 	TradePair        string
-	Timestamp        time.Time
 	Active           bool
+}
+
+type AlertRepository interface {
+	GetAllForUserIDs(userIds []uint) ([]Alert, error)
+}
+
+type AlertRepoMock struct {
+	Alerts []Alert
+}
+
+func (u *AlertRepoMock) GetAllForUserIDs(ids uint) ([]Alert, error) {
+	return u.Alerts, nil
 }
