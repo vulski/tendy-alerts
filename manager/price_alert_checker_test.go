@@ -37,7 +37,7 @@ func TestItGetsActiveAlertsForTheGivenCurrencyPriceLogAndWillNotifyTheUser(t *te
 	notifierFactoryMock := mocks.NewMockNotifierFactory(ctrl)
 	notifierFactoryMock.EXPECT().CreateNotifierFromType(tendy.EmailNotification).Return(notifierMock, nil).Times(1)
 
-	sut := NewPriceAlertChecker(notifierFactoryMock, alertRepoMock)
+	sut := NewPriceChecker(notifierFactoryMock, alertRepoMock)
 
 	// When we check the User's Alerts
 	sut.CheckPrice(latestPrice)
@@ -72,7 +72,7 @@ func TestItWillNotNotifyTheUserIfItShouldNot(t *testing.T) {
 	notifierFactoryMock := mocks.NewMockNotifierFactory(ctrl)
 	notifierFactoryMock.EXPECT().CreateNotifierFromType(gomock.Any()).Times(0)
 
-	sut := NewPriceAlertChecker(notifierFactoryMock, alertRepoMock)
+	sut := NewPriceChecker(notifierFactoryMock, alertRepoMock)
 
 	// When we check the User's Alerts
 	sut.CheckPrice(latestPrice)

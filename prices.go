@@ -3,7 +3,8 @@ package tendy_alerts
 import "time"
 
 type PriceFeed interface {
-	GetCurrencyFeed(currency string) (*chan PriceSnapshot, error)
+	ExchangeName() string
+	SubscribeToCurrency(currency string) (chan PriceSnapshot, error)
 	StartFeed() error
 	StopFeed() error
 }

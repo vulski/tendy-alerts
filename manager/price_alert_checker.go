@@ -4,14 +4,14 @@ import (
 	"github.com/vulski/tendy-alerts"
 )
 
-type PriceAlertChecker struct {
+type PriceChecker struct {
 	notifierFactory tendy_alerts.NotifierFactory
 	alertRepo       tendy_alerts.AlertRepository
 	alertEval       tendy_alerts.AlertEvaluator
 }
 
-func NewPriceAlertChecker(notifierFactory tendy_alerts.NotifierFactory, alertRepo tendy_alerts.AlertRepository) *PriceAlertChecker {
-	return &PriceAlertChecker{
+func NewPriceChecker(notifierFactory tendy_alerts.NotifierFactory, alertRepo tendy_alerts.AlertRepository) *PriceChecker {
+	return &PriceChecker{
 		notifierFactory: notifierFactory,
 		alertRepo:       alertRepo,
 	}
@@ -20,7 +20,7 @@ func NewPriceAlertChecker(notifierFactory tendy_alerts.NotifierFactory, alertRep
 // Get active alerts for the given currency,
 // Check alerts based on the latest prices,
 // If Alert is Valid, notify user based on User settings.
-func (p *PriceAlertChecker) CheckPrice(price tendy_alerts.PriceSnapshot) error {
+func (p *PriceChecker) CheckPrice(price tendy_alerts.PriceSnapshot) error {
 	alerts, err := p.alertRepo.GetActiveAlertsForCurrency(price.Currency)
 	if err != nil {
 		// TODO:

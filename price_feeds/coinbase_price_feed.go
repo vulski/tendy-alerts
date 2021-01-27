@@ -14,11 +14,15 @@ type CoinBasePriceFeed struct {
 	running           bool
 }
 
-func NewCoinBasePriceFeed() CoinBasePriceFeed {
-	return CoinBasePriceFeed{watchedCurrencies: make(map[string]chan tendy_alerts.PriceSnapshot)}
+func NewCoinBasePriceFeed() *CoinBasePriceFeed {
+	return &CoinBasePriceFeed{watchedCurrencies: make(map[string]chan tendy_alerts.PriceSnapshot)}
 }
 
-func (c *CoinBasePriceFeed) GetCurrencyFeed(currency string) (chan tendy_alerts.PriceSnapshot, error) {
+func (c *CoinBasePriceFeed) ExchangeName() string {
+	return "coinbase"
+}
+
+func (c *CoinBasePriceFeed) SubscribeToCurrency(currency string) (chan tendy_alerts.PriceSnapshot, error) {
 	err := c.subscribeToCoin(currency)
 	if err != nil {
 		return nil, err
