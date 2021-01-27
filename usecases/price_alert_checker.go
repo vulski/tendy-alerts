@@ -4,14 +4,6 @@ import (
 	"github.com/vulski/tendy-alerts"
 )
 
-// Get users
-// Get each users active alerts
-// Pull in exchange price feeds
-// Check User's Alerts based on the latest prices
-// If Alert is Valid, notify user based on User settings.
-
-// Update this User and User Alert list regularly
-
 type PriceAlertChecker struct {
 	notifierFactory tendy_alerts.NotifierFactory
 	userRepository  tendy_alerts.UserRepository
@@ -30,6 +22,11 @@ func NewPriceNotificationManager(notifierFactory tendy_alerts.NotifierFactory, u
 	}
 }
 
+// Get users
+// Get each users active alerts
+// Pull in exchange price feeds
+// Check User's Alerts based on the latest prices
+// If Alert is Valid, notify user based on User settings.
 func (p *PriceAlertChecker) Run() error {
 	users, err := p.userRepository.GetAllActive()
 	if nil != err {
