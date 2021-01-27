@@ -3,16 +3,23 @@ package usecases
 import (
 	tendy_alerts "github.com/vulski/tendy-alerts"
 	"github.com/vulski/tendy-alerts/enums"
+	"github.com/vulski/tendy-alerts/mocks"
 	"testing"
+	"github.com/golang/mock/gomock"
 )
-
-var userRepoMock tendy_alerts.UserRepoMock
-var alertRepoMock tendy_alerts.AlertRepoMock
 
 func TestItPullsUsers(t *testing.T) {
 	// Given
+	ctrl := gomock.NewController(t)
+	defer ctrl.Finish()
+
+	userRepoMock := mocks.NewMockUserRepository(ctrl)
+
 	// There is active users
-	userRepoMock.Users = []*tendy_alerts.User{{Username: "test"}}
+	user := &tendy_alerts.User{Username: "test"}
+	user.ID = 1
+	userRepoMock.EXPECT().GetAllActive().Return([]*tendy_alerts.User{user}, nil)
+
 	// And that user has active Alerts.
 	targetAlert := tendy_alerts.Alert{
 		Currency:         "BTC",
@@ -23,14 +30,17 @@ func TestItPullsUsers(t *testing.T) {
 		Comparison:       enums.AlertComparison_GREATER_THAN,
 		TradePair:        "BTC/USD",
 		Active:           true,
+		UserId:           user.ID,
 	}
-	alertRepoMock.Alerts = append(alertRepoMock.Alerts, targetAlert)
+	alertRepoMock := mocks.NewMockAlertRepository(ctrl)
+	alertRepoMock.EXPECT().GetAllForUserIDs([]uint{user.ID}).Return([]tendy_alerts.Alert{targetAlert}, nil)
 
-	sut := NewPriceNotificationManager(&userRepoMock)
+	// Then the User should be notified.
+	notifierMock := mocks.NewMockNotifier(ctrl)
+	notifierMock.EXPECT().NotifyUser(tendy_alerts.CurrencyPriceLog{}, targetAlert).Return(nil)
+
+	sut := NewPriceNotificationManager(userRepoMock, alertRepoMock, notifierMock)
 
 	// When we check the User's Alerts
 	sut.Run()
-
-	// Then the User should be notified.
-
 }

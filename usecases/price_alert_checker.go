@@ -15,15 +15,18 @@ import (
 type PriceAlertChecker struct {
 	userRepository          tendy_alerts.UserRepository
 	alertRepository         tendy_alerts.AlertRepository
-	notificationSettingRepo tendy_alerts.NotificationSettingRepository
 	notifier                tendy_alerts.Notifier
 
 	users                   []*tendy_alerts.User
 	alertEval               tendy_alerts.AlertEvaluator
 }
 
-func NewPriceNotificationManager(userRepo tendy_alerts.UserRepository) *PriceAlertChecker {
-	return &PriceAlertChecker{userRepository: userRepo}
+func NewPriceNotificationManager(userRepo tendy_alerts.UserRepository, alertRepo tendy_alerts.AlertRepository, notifier tendy_alerts.Notifier) *PriceAlertChecker {
+	return &PriceAlertChecker{
+		userRepository: userRepo,
+		alertRepository: alertRepo,
+		notifier: notifier,
+	}
 }
 
 func (p *PriceAlertChecker) Run() error {
@@ -44,11 +47,7 @@ func (p *PriceAlertChecker) Run() error {
 	latestPrice := tendy_alerts.CurrencyPriceLog{}
 	for _, alert := range alerts {
 		if p.alertEval.ShouldAlertUser(latestPrice, alert) {
-			notificationSetting, err := p.notificationSettingRepo.GetForAlertId(alert.ID)
-			if err != nil {
-				// TODO:
-			}
-			err = p.notifier.NotifyUser(latestPrice, alert, notificationSetting)
+			err = p.notifier.NotifyUser(latestPrice, alert)
 			if err != nil {
 				// TODO:
 			}

@@ -14,16 +14,10 @@ type Alert struct {
 	Comparison       enums.AlertComparison
 	TradePair        string
 	Active           bool
+	UserId           uint
 }
 
+//go:generate mockgen -destination=mocks/mock_alert_repository.go -package=mocks . AlertRepository
 type AlertRepository interface {
 	GetAllForUserIDs(userIds []uint) ([]Alert, error)
-}
-
-type AlertRepoMock struct {
-	Alerts []Alert
-}
-
-func (u *AlertRepoMock) GetAllForUserIDs(ids uint) ([]Alert, error) {
-	return u.Alerts, nil
 }

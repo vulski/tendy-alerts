@@ -5,14 +5,8 @@ type User struct {
 	Username string
 }
 
+//go:generate mockgen -destination=mocks/mock_user_repository.go -package=mocks . UserRepository
 type UserRepository interface {
 	GetAllActive() ([]*User, error)
 }
 
-type UserRepoMock struct {
-	Users []*User
-}
-
-func (u *UserRepoMock) GetAllActive() ([]*User, error) {
-	return u.Users, nil
-}
