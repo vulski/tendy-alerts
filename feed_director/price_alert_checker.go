@@ -3,6 +3,7 @@ package feed_director
 import (
 	ta "github.com/vulski/tendy-alerts"
 	"log"
+	"math"
 )
 
 type PriceChecker struct {
@@ -22,15 +23,15 @@ func NewPriceChecker(notifierFactory ta.NotifierFactory, alertRepo ta.AlertRepos
 // Get active alerts for the given currency,
 // Check alerts based on the latest prices,
 // If Alert is Valid, notify user based on User settings.
-func (p *PriceChecker) CheckPrice(price ta.PriceSnapshot) error {
+func (a *PriceChecker) CheckPrice(price ta.PriceSnapshot) error {
 	// TODO: Optimize search for alerts based on the current price.
-	alerts, err := p.alertRepo.GetActiveAlertsForCurrency(price.Currency)
+	alerts, err := a.alertRepo.GetActiveAlertsForCurrency(price.Currency)
 	if err != nil {
 		return handleErr(err)
 	}
 	for _, alert := range alerts {
-		if p.shouldAlertUser(price, alert) {
-			notifier, err := p.notifierFactory.CreateNotifierFromType(alert.NotificationSettings.Type)
+		if a.shouldAlertUser(price, alert) {
+			notifier, err := a.notifierFactory.CreateNotifierFromType(alert.NotificationSettings.Type)
 			if err != nil {
 				return handleErr(err)
 			}
@@ -40,7 +41,7 @@ func (p *PriceChecker) CheckPrice(price ta.PriceSnapshot) error {
 			}
 			if alert.Type == ta.TargetAlert {
 				alert.Active = false
-				_, err = p.alertRepo.Save(alert)
+				_, err = a.alertRepo.Save(alert)
 				if err != nil {
 					return handleErr(err)
 				}
@@ -51,18 +52,30 @@ func (p *PriceChecker) CheckPrice(price ta.PriceSnapshot) error {
 	return nil
 }
 
-func (a *PriceChecker) shouldAlertUser(latestPrice ta.PriceSnapshot, alert ta.Alert) bool {
+func (p *PriceChecker) shouldAlertUser(latestPrice ta.PriceSnapshot, alert ta.Alert) bool {
 	if !alert.Active {
 		return false
 	}
-
-	if alert.Type == ta.TargetAlert {
+	switch alert.Type {
+	case ta.TargetAlert:
 		if alert.Comparison == ta.LessThanComparison {
 			return latestPrice.Price < alert.Price
 		}
 		return latestPrice.Price > alert.Price
+
+	case ta.PercentageChangeAlert:
+		price, err := p.priceRepo.GetLatestForFrequency(alert.Frequency)
+		if err != nil {
+			// TODO: Maybe have some retry attempts?
+			log.Println("error: " + err.Error())
+			return false
+		}
+		change := latestPrice.Price - price.Price
+		percentageChange := change / price.Price
+		return math.Abs(percentageChange) > alert.PercentageChange
+	default:
+		return false
 	}
-	return false
 }
 
 func handleErr(err error) error {
