@@ -27,3 +27,10 @@ func (p *PriceSnapshot) Stringify() string {
 type PriceSnapshotRepository interface {
 	GetLatestForFrequency(freq AlertFrequency) (PriceSnapshot, error)
 }
+
+type PriceSnapshotRepoInMem struct {
+}
+
+func (p *PriceSnapshotRepoInMem) GetLatestForFrequency(freq AlertFrequency) (PriceSnapshot, error) {
+	return PriceSnapshot{}, nil
+}
