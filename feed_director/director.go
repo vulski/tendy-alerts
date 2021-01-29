@@ -1,29 +1,32 @@
-package manager
+package feed_director
 
 import (
 	tendy_alerts "github.com/vulski/tendy-alerts"
 	"github.com/vulski/tendy-alerts/price_feeds"
+	"time"
 )
 
-type Manager struct {
+// TODO: Better name lel
+type Director struct {
 	running      bool
 	feeds        map[string]map[string]chan tendy_alerts.PriceSnapshot
 	exchanges    []tendy_alerts.PriceFeed
 	priceChecker *PriceChecker
 }
 
-func New(priceChecker *PriceChecker) Manager {
-	return Manager{
+func New(priceChecker *PriceChecker) Director {
+	return Director{
 		exchanges:    []tendy_alerts.PriceFeed{price_feeds.NewCoinBasePriceFeed()},
 		feeds:        make(map[string]map[string]chan tendy_alerts.PriceSnapshot),
 		priceChecker: priceChecker,
 	}
 }
 
-func (m *Manager) Start() {
+func (m *Director) Start() {
 	m.running = true
 	// Initialize exchange subscriptions.
 	for _, exchange := range m.exchanges {
+		// TODO: Add list of currencies? User based + Exchange based?
 		// Default to BTC for now.
 		currency := "BTC"
 		feed, err := exchange.SubscribeToCurrency(currency)
@@ -39,18 +42,24 @@ func (m *Manager) Start() {
 	}
 }
 
-func (m *Manager) Stop() {
+func (m *Director) Stop() {
 	m.running = false
 	for _, exchange := range m.exchanges {
 		exchange.StopFeed()
 	}
 }
 
-func (m *Manager) processFeed(feed chan tendy_alerts.PriceSnapshot) {
+func (m *Director) processFeed(feed chan tendy_alerts.PriceSnapshot) {
+	start := time.Now()
 	for m.running {
+		now := time.Now()
 		select {
 		case snapshot := <-feed:
-			m.priceChecker.CheckPrice(snapshot)
+			// TODO: Add a different way to rate limit.
+			if now.Sub(start).Seconds() > 2 {
+				start = time.Now()
+				m.priceChecker.CheckPrice(snapshot)
+			}
 		}
 	}
 }

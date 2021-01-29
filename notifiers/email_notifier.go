@@ -36,9 +36,11 @@ func (en *EmailNotifier) NotifyUser(price tendy_alerts.PriceSnapshot, alert tend
 	auth := smtp.PlainAuth("", conf.Username, conf.Password, conf.Host)
 	to := []string{alert.NotificationSettings.TargetUsername}
 	msg := []byte(price.Stringify())
-	err := smtp.SendMail(fmt.Sprintf("%s:%i", conf.Host, conf.Port), auth, conf.FromAddress, to, msg)
+	addr := fmt.Sprintf("%s:%d", conf.Host, conf.Port)
+	err := smtp.SendMail(addr, auth, conf.FromAddress, to, msg)
 	if err != nil {
 		return err
 	}
+	fmt.Println("Finished with no errors.")
 	return nil
 }

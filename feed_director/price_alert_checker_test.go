@@ -1,4 +1,4 @@
-package manager
+package feed_director
 
 import (
 	"github.com/golang/mock/gomock"
