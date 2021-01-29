@@ -1,7 +1,6 @@
 package manager
 
 import (
-	"fmt"
 	tendy_alerts "github.com/vulski/tendy-alerts"
 	"github.com/vulski/tendy-alerts/price_feeds"
 )
@@ -49,10 +48,8 @@ func (m *Manager) Stop() {
 
 func (m *Manager) processFeed(feed chan tendy_alerts.PriceSnapshot) {
 	for m.running {
-		fmt.Println("Checking coinbase")
 		select {
 		case snapshot := <-feed:
-			fmt.Println("New price to check!")
 			m.priceChecker.CheckPrice(snapshot)
 		}
 	}

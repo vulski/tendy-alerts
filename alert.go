@@ -23,9 +23,9 @@ const (
 )
 
 type Alert struct {
-	ID        uint
-	CreatedAt time.Time
-	UpdatedAt time.Time
+	ID                   uint
+	CreatedAt            time.Time
+	UpdatedAt            time.Time
 	DeletedAt            time.Time
 	Currency             string
 	Price                float64
@@ -41,11 +41,17 @@ type Alert struct {
 
 //go:generate mockgen -destination=mocks/mock_alert_repository.go -package=mocks . AlertRepository
 type AlertRepository interface {
+	Save(alert Alert) (*Alert, error)
 	GetActiveAlertsForCurrency(currency string) ([]Alert, error)
 }
 
 type AlertRepositoryInMem struct {
 	Alerts []Alert
+}
+
+func (r *AlertRepositoryInMem) Save(alert Alert) (*Alert, error) {
+	r.Alerts = []Alert{alert}
+	return &alert, nil
 }
 
 func (r *AlertRepositoryInMem) GetActiveAlertsForCurrency(currency string) ([]Alert, error) {

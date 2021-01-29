@@ -19,13 +19,14 @@ type NotificationType string
 const EmailNotification NotificationType = "email"
 
 type NotificationSettings struct {
-	ID        uint
-	CreatedAt time.Time
-	UpdatedAt time.Time
-	DeletedAt time.Time
-	Type      NotificationType
-	UserId    uint
-	AlertId   uint
+	ID             uint
+	CreatedAt      time.Time
+	UpdatedAt      time.Time
+	DeletedAt      time.Time
+	Type           NotificationType
+	TargetUsername string
+	UserId         uint
+	AlertId        uint
 }
 
 //go:generate mockgen -destination=mocks/mock_notification_setting_repository.go -package=mocks . NotificationSettingsRepository

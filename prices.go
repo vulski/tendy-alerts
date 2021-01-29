@@ -1,6 +1,9 @@
 package tendy_alerts
 
-import "time"
+import (
+	"fmt"
+	"time"
+)
 
 type PriceFeed interface {
 	ExchangeName() string
@@ -13,6 +16,11 @@ type PriceSnapshot struct {
 	Price     float64 `json:"price"`
 	Exchange  string  `json:"exchange"`
 	Timestamp time.Time
+}
+
+// TODO: make fancy.
+func (p *PriceSnapshot) Stringify() string {
+	return fmt.Sprintf("%s's price has changed to %f", p.Currency, p.Price)
 }
 
 type CurrencyPriceLogRepoConstraints struct {
