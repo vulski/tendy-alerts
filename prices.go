@@ -23,12 +23,7 @@ func (p *PriceSnapshot) Stringify() string {
 	return fmt.Sprintf("%s's price has changed to %f", p.Currency, p.Price)
 }
 
-type CurrencyPriceLogRepoConstraints struct {
-	Name             string
-	PriceLessThan    string
-	PriceGreaterThan string
-}
-
-type CurrencyPriceLogRepository interface {
-	GetWithConstraints(constraints CurrencyPriceLogRepoConstraints) ([]*PriceSnapshot, error)
+//go:generate mockgen -destination=mocks/mock_price_snapshot_repository.go -package=mocks . PriceSnapshotRepository
+type PriceSnapshotRepository interface {
+	GetLatestForFrequency(freq AlertFrequency) (PriceSnapshot, error)
 }

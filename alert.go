@@ -10,8 +10,7 @@ const (
 	GreaterThanComparison AlertComparison = "greater_than"
 	LessThanComparison    AlertComparison = "less_than"
 
-	OneTimeFrequency        AlertFrequency = "one_time"
-	FifteenMinuteFrequency                 = "15m"
+	FifteenMinuteFrequency  AlertFrequency = "15m"
 	ThirtyMinuteFrequency                  = "30m"
 	OneHourFrequency                       = "1hr"
 	SixHourFrequency                       = "6hr"
@@ -56,25 +55,4 @@ func (r *AlertRepositoryInMem) Save(alert Alert) (*Alert, error) {
 
 func (r *AlertRepositoryInMem) GetActiveAlertsForCurrency(currency string) ([]Alert, error) {
 	return r.Alerts, nil
-}
-
-type AlertEvaluator struct {
-}
-
-func NewAlertEvaluator() *AlertEvaluator {
-	return &AlertEvaluator{}
-}
-
-func (a *AlertEvaluator) ShouldAlertUser(latestPrice PriceSnapshot, alert Alert) bool {
-	if !alert.Active {
-		return false
-	}
-
-	if alert.Type == TargetAlert {
-		if alert.Comparison == LessThanComparison {
-			return latestPrice.Price < alert.Price
-		}
-		return latestPrice.Price > alert.Price
-	}
-	return false
 }
