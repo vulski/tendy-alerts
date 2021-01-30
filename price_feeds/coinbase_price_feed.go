@@ -6,6 +6,7 @@ import (
 	tendy_alerts "github.com/vulski/tendy-alerts"
 	"strconv"
 	"strings"
+	"time"
 )
 
 type CoinBasePriceFeed struct {
@@ -87,7 +88,12 @@ func (c *CoinBasePriceFeed) digestCoins() {
 		currency := strings.Split(message.ProductID, "-")
 		if len(currency) > 0 {
 			currency := currency[0]
-			latestPrice := tendy_alerts.PriceSnapshot{Price: price, Currency: currency}
+			latestPrice := tendy_alerts.PriceSnapshot{
+				Price:     price,
+				Currency:  currency,
+				Exchange:  c.ExchangeName(),
+				Timestamp: time.Now(),
+			}
 			c.watchedCurrencies[currency] <- latestPrice
 		}
 	}

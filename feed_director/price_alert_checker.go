@@ -6,14 +6,18 @@ import (
 	"math"
 )
 
-type PriceChecker struct {
+type PriceChecker interface {
+	CheckPrice(price ta.PriceSnapshot) error
+}
+
+type PriceCheckerImpl struct {
 	notifierFactory ta.NotifierFactory
 	alertRepo       ta.AlertRepository
 	priceRepo       ta.PriceSnapshotRepository
 }
 
-func NewPriceChecker(notifierFactory ta.NotifierFactory, alertRepo ta.AlertRepository, priceRepo ta.PriceSnapshotRepository) *PriceChecker {
-	return &PriceChecker{
+func NewPriceChecker(notifierFactory ta.NotifierFactory, alertRepo ta.AlertRepository, priceRepo ta.PriceSnapshotRepository) *PriceCheckerImpl {
+	return &PriceCheckerImpl{
 		notifierFactory: notifierFactory,
 		alertRepo:       alertRepo,
 		priceRepo:       priceRepo,
@@ -23,7 +27,7 @@ func NewPriceChecker(notifierFactory ta.NotifierFactory, alertRepo ta.AlertRepos
 // Get active alerts for the given currency,
 // Check alerts based on the latest prices,
 // If Alert is Valid, notify user based on User settings.
-func (a *PriceChecker) CheckPrice(price ta.PriceSnapshot) error {
+func (a *PriceCheckerImpl) CheckPrice(price ta.PriceSnapshot) error {
 	// TODO: Optimize search for alerts based on the current price.
 	alerts, err := a.alertRepo.GetActiveAlertsForCurrency(price.Currency)
 	if err != nil {
@@ -52,7 +56,7 @@ func (a *PriceChecker) CheckPrice(price ta.PriceSnapshot) error {
 	return nil
 }
 
-func (p *PriceChecker) shouldAlertUser(latestPrice ta.PriceSnapshot, alert ta.Alert) bool {
+func (p *PriceCheckerImpl) shouldAlertUser(latestPrice ta.PriceSnapshot, alert ta.Alert) bool {
 	if !alert.Active {
 		return false
 	}

@@ -14,7 +14,7 @@ type priceCheckerMocks struct {
 	priceRepo       *mocks.MockPriceSnapshotRepository
 }
 
-func createPriceCheckerMocked(ctrl *gomock.Controller) (*PriceChecker, *priceCheckerMocks) {
+func createPriceCheckerMocked(ctrl *gomock.Controller) (*PriceCheckerImpl, *priceCheckerMocks) {
 	mks := &priceCheckerMocks{
 		notifierFactory: mocks.NewMockNotifierFactory(ctrl),
 		alertRepo:       mocks.NewMockAlertRepository(ctrl),

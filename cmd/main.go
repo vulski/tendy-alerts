@@ -9,7 +9,7 @@ import (
 func main() {
 	targetAlert := tendy_alerts.Alert{
 		Currency:             "BTC",
-		Price:                20000,
+		Price:                34_700,
 		Type:                 tendy_alerts.TargetAlert,
 		Comparison:           tendy_alerts.GreaterThanComparison,
 		TradePair:            "BTC/USD",

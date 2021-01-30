@@ -20,10 +20,6 @@ type EmailConfiguration struct {
 	Debug       bool   `json:"debug"`
 }
 
-func NewEmailNotifier(config EmailConfiguration) *EmailNotifier {
-	return &EmailNotifier{config: config}
-}
-
 func (en *EmailNotifier) NotifyUser(price tendy_alerts.PriceSnapshot, alert tendy_alerts.Alert) error {
 	conf := en.config
 	log.Println("Sending Email.")

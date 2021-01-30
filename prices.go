@@ -5,6 +5,7 @@ import (
 	"time"
 )
 
+//go:generate mockgen -destination=mocks/mock_price_feed.go -package=mocks . PriceFeed
 type PriceFeed interface {
 	ExchangeName() string
 	SubscribeToCurrency(currency string) (chan PriceSnapshot, error)
@@ -26,6 +27,7 @@ func (p *PriceSnapshot) Stringify() string {
 //go:generate mockgen -destination=mocks/mock_price_snapshot_repository.go -package=mocks . PriceSnapshotRepository
 type PriceSnapshotRepository interface {
 	GetLatestForFrequency(freq AlertFrequency) (PriceSnapshot, error)
+	Save(priceSnapshot PriceSnapshot) (PriceSnapshot, error)
 }
 
 type PriceSnapshotRepoInMem struct {
@@ -33,4 +35,8 @@ type PriceSnapshotRepoInMem struct {
 
 func (p *PriceSnapshotRepoInMem) GetLatestForFrequency(freq AlertFrequency) (PriceSnapshot, error) {
 	return PriceSnapshot{}, nil
+}
+
+func (p *PriceSnapshotRepoInMem) Save(snapshot PriceSnapshot) (PriceSnapshot, error) {
+	return snapshot, nil
 }
