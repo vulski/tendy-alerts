@@ -2,7 +2,6 @@ package feed_director
 
 import (
 	ta "github.com/vulski/tendy-alerts"
-	"time"
 )
 
 // TODO: Better name lel
@@ -49,16 +48,10 @@ func (m *Director) Stop() {
 }
 
 func (m *Director) processFeed(feed chan ta.PriceSnapshot) {
-	start := time.Now()
 	for m.running {
-		now := time.Now()
 		select {
 		case snapshot := <-feed:
-			// TODO: Add a different way to rate limit.
-			if now.Sub(start).Seconds() > 2 {
-				start = time.Now()
-				m.priceChecker.CheckPrice(snapshot)
-			}
+			m.priceChecker.CheckPrice(snapshot)
 		}
 	}
 }

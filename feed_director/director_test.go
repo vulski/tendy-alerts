@@ -5,7 +5,6 @@ import (
 	ta "github.com/vulski/tendy-alerts"
 	"github.com/vulski/tendy-alerts/mocks"
 	"testing"
-	"time"
 )
 
 type PriceCheckerStub struct {
@@ -15,6 +14,41 @@ type PriceCheckerStub struct {
 func (p *PriceCheckerStub) CheckPrice(price ta.PriceSnapshot) error {
 	p.pricesChecked = append(p.pricesChecked, price)
 	return nil
+}
+
+func TestDirector_processFeed_willNotRunIfRunningIsFalse(t *testing.T) {
+	// Given
+	priceChecker := &PriceCheckerStub{}
+	sut := New(priceChecker, []ta.PriceFeed{})
+
+	feed := make(chan ta.PriceSnapshot)
+	go func() { feed <- ta.PriceSnapshot{} }()
+
+	// When
+	sut.processFeed(feed)
+
+	// Then
+	if len(priceChecker.pricesChecked) > 0 {
+		t.Error("no prices should have been checked")
+	}
+}
+
+func TestDirector_Stop_WillStopExchangeFeedsAndSetRunningToFalse(t *testing.T) {
+	// Given
+	ctrl := gomock.NewController(t)
+	exchange := mocks.NewMockPriceFeed(ctrl)
+	exchange.EXPECT().StopFeed().Times(1)
+	priceChecker := &PriceCheckerStub{}
+	sut := New(priceChecker, []ta.PriceFeed{exchange})
+	sut.running = true
+
+	// When
+	sut.Stop()
+
+	// Then
+	if sut.running {
+		t.Error("running should be false")
+	}
 }
 
 func TestDirector_Start_WillSubscribeAllExchangesToBTCAndCreateABTCFeed(t *testing.T) {
@@ -48,7 +82,7 @@ func TestDirector_Start_WillSubscribeAllExchangesToBTCAndCreateABTCFeed(t *testi
 	}
 }
 
-func TestDirector_Start_WillRunAGoRoutineThatChecksPricesEveryTwoSeconds(t *testing.T) {
+func TestDirector_Start_WillRunAGoRoutineThatChecksPrices(t *testing.T) {
 	// Given
 	ctrl := gomock.NewController(t)
 	exchange := mocks.NewMockPriceFeed(ctrl)
@@ -62,12 +96,10 @@ func TestDirector_Start_WillRunAGoRoutineThatChecksPricesEveryTwoSeconds(t *test
 	// When
 	sut.Start()
 
-	priceFeed <-ta.PriceSnapshot{Price: 10_000}
+	priceFeed <- ta.PriceSnapshot{Price: 10_000}
 
 	// Then
-	time.Sleep(time.Second * 3)
 	if len(priceChecker.pricesChecked) <= 0 {
 		t.Error("no prices were checked.")
 	}
 }
-
