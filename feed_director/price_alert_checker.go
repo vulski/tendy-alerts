@@ -4,10 +4,12 @@ import (
 	ta "github.com/vulski/tendy-alerts"
 	"log"
 	"math"
+	"time"
 )
 
 type PriceChecker interface {
 	CheckPrice(price ta.PriceSnapshot) error
+	LogPrice(price ta.PriceSnapshot) error
 }
 
 type PriceCheckerImpl struct {
@@ -24,10 +26,26 @@ func NewPriceChecker(notifierFactory ta.NotifierFactory, alertRepo ta.AlertRepos
 	}
 }
 
+func (a *PriceCheckerImpl) LogPrice(price ta.PriceSnapshot) error {
+	previous, err := a.priceRepo.GetLatestForFrequency(ta.FifteenMinuteFrequency)
+	if err != nil {
+		return err
+	}
+	if previous.CreatedAt.Sub(price.CreatedAt).Minutes() > float64(time.Minute * 15){
+		_, err = a.priceRepo.Save(price)
+		if err != nil {
+			return err
+		}
+	}
+
+	return nil
+}
+
 // Get active alerts for the given currency,
 // Check alerts based on the latest prices,
 // If Alert is Valid, notify user based on User settings.
 func (a *PriceCheckerImpl) CheckPrice(price ta.PriceSnapshot) error {
+	// TODO: This is doing too many thing, maybe refactor later?
 	// TODO: Optimize search for alerts based on the current price.
 	alerts, err := a.alertRepo.GetActiveAlertsForCurrency(price.Currency)
 	if err != nil {

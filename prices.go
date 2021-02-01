@@ -16,7 +16,7 @@ type PriceSnapshot struct {
 	Currency  string  `json:"stub"`
 	Price     float64 `json:"price"`
 	Exchange  string  `json:"exchange"`
-	Timestamp time.Time
+	CreatedAt time.Time
 }
 
 // TODO: make fancy.

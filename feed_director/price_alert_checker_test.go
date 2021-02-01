@@ -1,4 +1,5 @@
 package feed_director
+
 // TODO: Rename tests, having "ShouldPass" is confusing.
 
 import (
@@ -6,6 +7,7 @@ import (
 	ta "github.com/vulski/tendy-alerts"
 	"github.com/vulski/tendy-alerts/mocks"
 	"testing"
+	"time"
 )
 
 type priceCheckerMocks struct {
@@ -24,7 +26,26 @@ func createPriceCheckerMocked(ctrl *gomock.Controller) (*PriceCheckerImpl, *pric
 	return NewPriceChecker(mks.notifierFactory, mks.alertRepo, mks.priceRepo), mks
 }
 
-func TestPriceChecker_CheckPrice_PercentageChangeAlertGreaterThanSuccess(t *testing.T) {
+func TestPriceCheckerImpl_LogPriceWillLogThePriceAt15MinutesIntervals(t *testing.T) {
+	// Given
+	ctrl := gomock.NewController(t)
+	defer ctrl.Finish()
+
+	sut, mks := createPriceCheckerMocked(ctrl)
+	mks.priceRepo.EXPECT().GetLatestForFrequency(gomock.Any()).Return(ta.PriceSnapshot{CreatedAt: time.Now().Add(-time.Minute * 20)}, nil)
+	price := ta.PriceSnapshot{Price: 10_000, CreatedAt: time.Now().Add(-time.Minute * 15)}
+	mks.priceRepo.EXPECT().Save(price).Times(1).Return(price, nil)
+
+	// When
+	err := sut.LogPrice(price)
+
+	// Then
+	if err != nil {
+		t.Error(err)
+	}
+}
+
+func TestPriceCheckerImpl_CheckPrice_PercentageChangeAlertGreaterThanSuccess(t *testing.T) {
 	// Given
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
@@ -57,7 +78,7 @@ func TestPriceChecker_CheckPrice_PercentageChangeAlertGreaterThanSuccess(t *test
 	sut.CheckPrice(latestPrice)
 }
 
-func TestPriceChecker_CheckPrice_ItWillDisableOneTimeAlertsAfterSuccessfullyNotifying(t *testing.T) {
+func TestPriceCheckerImpl_CheckPrice_ItWillDisableOneTimeAlertsAfterSuccessfullyNotifying(t *testing.T) {
 	// Given
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
@@ -97,7 +118,7 @@ func TestPriceChecker_CheckPrice_ItWillDisableOneTimeAlertsAfterSuccessfullyNoti
 	sut.CheckPrice(latestPrice)
 }
 
-func TestPriceChecker_CheckPrice_WillGetsActiveAlertsForTheGivenCurrencyPriceLogAndWillNotifyTheUser(t *testing.T) {
+func TestPriceCheckerImpl_CheckPrice_WillGetsActiveAlertsForTheGivenCurrencyPriceLogAndWillNotifyTheUser(t *testing.T) {
 	// Given
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
@@ -137,7 +158,7 @@ func TestPriceChecker_CheckPrice_WillGetsActiveAlertsForTheGivenCurrencyPriceLog
 	sut.CheckPrice(latestPrice)
 }
 
-func TestPriceChecker_CheckPrice_WillNotNotifyTheUserIfItShouldNot(t *testing.T) {
+func TestPriceCheckerImpl_CheckPrice_WillNotNotifyTheUserIfItShouldNot(t *testing.T) {
 	// Given
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
@@ -173,7 +194,6 @@ func TestPriceChecker_CheckPrice_WillNotNotifyTheUserIfItShouldNot(t *testing.T)
 	// When we check the User's Alerts
 	sut.CheckPrice(latestPrice)
 }
-
 
 func TestPriceChecker_shouldAlertUser_WillIgnoreInActiveAlerts(t *testing.T) {
 	// Given

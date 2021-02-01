@@ -15,6 +15,9 @@ func (p *PriceCheckerStub) CheckPrice(price ta.PriceSnapshot) error {
 	p.pricesChecked = append(p.pricesChecked, price)
 	return nil
 }
+func (p *PriceCheckerStub) LogPrice(price ta.PriceSnapshot) error {
+	return nil
+}
 
 func TestDirector_processFeed_willNotRunIfRunningIsFalse(t *testing.T) {
 	// Given

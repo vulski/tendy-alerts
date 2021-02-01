@@ -92,7 +92,7 @@ func (c *CoinBasePriceFeed) digestCoins() {
 				Price:     price,
 				Currency:  currency,
 				Exchange:  c.ExchangeName(),
-				Timestamp: time.Now(),
+				CreatedAt: time.Now(),
 			}
 			c.watchedCurrencies[currency] <- latestPrice
 		}
