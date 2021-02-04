@@ -26,14 +26,14 @@ func (p *PriceSnapshot) Stringify() string {
 
 //go:generate mockgen -destination=mocks/mock_price_snapshot_repository.go -package=mocks . PriceSnapshotRepository
 type PriceSnapshotRepository interface {
-	GetLatestForFrequency(freq AlertFrequency) (PriceSnapshot, error)
+	GetLatest(freq AlertFrequency, exchange string) (PriceSnapshot, error)
 	Save(priceSnapshot PriceSnapshot) (PriceSnapshot, error)
 }
 
 type PriceSnapshotRepoInMem struct {
 }
 
-func (p *PriceSnapshotRepoInMem) GetLatestForFrequency(freq AlertFrequency) (PriceSnapshot, error) {
+func (p *PriceSnapshotRepoInMem) GetLatest(freq AlertFrequency, exchange string) (PriceSnapshot, error) {
 	return PriceSnapshot{}, nil
 }
 

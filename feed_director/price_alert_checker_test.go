@@ -32,14 +32,13 @@ func TestPriceCheckerImpl_LogPriceWillLogThePriceAt15MinutesIntervals(t *testing
 	defer ctrl.Finish()
 
 	sut, mks := createPriceCheckerMocked(ctrl)
-	mks.priceRepo.EXPECT().GetLatestForFrequency(gomock.Any()).Return(ta.PriceSnapshot{CreatedAt: time.Now().Add(-time.Minute * 20)}, nil)
-	price := ta.PriceSnapshot{Price: 10_000, CreatedAt: time.Now().Add(-time.Minute * 15)}
+	// Expect
+	mks.priceRepo.EXPECT().GetLatest(gomock.Any(), gomock.Any()).Return(ta.PriceSnapshot{CreatedAt: time.Now().Add(-time.Minute * 15)}, nil)
+	price := ta.PriceSnapshot{Price: 10_000, CreatedAt: time.Now()}
 	mks.priceRepo.EXPECT().Save(price).Times(1).Return(price, nil)
 
 	// When
 	err := sut.LogPrice(price)
-
-	// Then
 	if err != nil {
 		t.Error(err)
 	}
@@ -67,7 +66,7 @@ func TestPriceCheckerImpl_CheckPrice_PercentageChangeAlertGreaterThanSuccess(t *
 	latestPrice := ta.PriceSnapshot{Currency: "BTC", Price: 10000}
 	alerts := []ta.Alert{alert}
 	mks.alertRepo.EXPECT().GetActiveAlertsForCurrency(latestPrice.Currency).Return(alerts, nil).Times(1)
-	mks.priceRepo.EXPECT().GetLatestForFrequency(alert.Frequency).Return(ta.PriceSnapshot{Price: 8333}, nil)
+	mks.priceRepo.EXPECT().GetLatest(alert.Frequency, gomock.Any()).Return(ta.PriceSnapshot{Price: 8333}, nil)
 
 	// Then the User should be notified.
 	notifierMock := mocks.NewMockNotifier(ctrl)
@@ -305,7 +304,7 @@ func TestPriceChecker_shouldAlertUser_PercentageChangeAlertDecreaseDoesNotMeetTh
 
 	// When
 	sut, mks := createPriceCheckerMocked(ctrl)
-	mks.priceRepo.EXPECT().GetLatestForFrequency(alert.Frequency).Return(previousPrice, nil)
+	mks.priceRepo.EXPECT().GetLatest(alert.Frequency, gomock.Any()).Return(previousPrice, nil)
 
 	// Then
 	if sut.shouldAlertUser(latestPrice, alert) {
@@ -330,7 +329,7 @@ func TestPriceChecker_shouldAlertUser_PercentageChangeAlertDecreaseMeetsThreshol
 
 	// When
 	sut, mks := createPriceCheckerMocked(ctrl)
-	mks.priceRepo.EXPECT().GetLatestForFrequency(alert.Frequency).Return(previousPrice, nil)
+	mks.priceRepo.EXPECT().GetLatest(alert.Frequency, gomock.Any()).Return(previousPrice, nil)
 
 	// Then
 	if !sut.shouldAlertUser(latestPrice, alert) {
@@ -355,7 +354,7 @@ func TestPriceChecker_shouldAlertUser_PercentageChangeAlertIncreaseMeetsThreshol
 
 	// When
 	sut, mks := createPriceCheckerMocked(ctrl)
-	mks.priceRepo.EXPECT().GetLatestForFrequency(alert.Frequency).Return(previousPrice, nil)
+	mks.priceRepo.EXPECT().GetLatest(alert.Frequency, gomock.Any()).Return(previousPrice, nil)
 
 	// Then
 	if !sut.shouldAlertUser(latestPrice, alert) {
@@ -379,7 +378,7 @@ func TestPriceChecker_shouldAlertUser_PercentageChangeAlertIncreaseDoesNotMeetTh
 
 	// When
 	sut, mks := createPriceCheckerMocked(ctrl)
-	mks.priceRepo.EXPECT().GetLatestForFrequency(alert.Frequency).Return(previousPrice, nil)
+	mks.priceRepo.EXPECT().GetLatest(alert.Frequency, gomock.Any()).Return(previousPrice, nil)
 
 	// Then
 	if sut.shouldAlertUser(latestPrice, alert) {

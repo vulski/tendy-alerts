@@ -4,6 +4,7 @@ import (
 	"github.com/vulski/tendy-alerts"
 	"github.com/vulski/tendy-alerts/feed_director"
 	"github.com/vulski/tendy-alerts/notifiers"
+	"github.com/vulski/tendy-alerts/price_feeds"
 )
 
 func main() {
@@ -22,7 +23,9 @@ func main() {
 	}
 	alertRepo := tendy_alerts.AlertRepositoryInMem{Alerts: []tendy_alerts.Alert{targetAlert}}
 	priceChecker := feed_director.NewPriceChecker(factory, &alertRepo, &tendy_alerts.PriceSnapshotRepoInMem{})
-	director := feed_director.New(priceChecker)
+
+	exchanges := []tendy_alerts.PriceFeed{price_feeds.NewCoinBasePriceFeed()}
+	director := feed_director.New(priceChecker, exchanges)
 	director.Start()
 	for {
 		// TODO: CLI or something

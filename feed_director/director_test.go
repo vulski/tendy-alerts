@@ -5,10 +5,12 @@ import (
 	ta "github.com/vulski/tendy-alerts"
 	"github.com/vulski/tendy-alerts/mocks"
 	"testing"
+	"time"
 )
 
 type PriceCheckerStub struct {
 	pricesChecked []ta.PriceSnapshot
+	pricesLogged  []ta.PriceSnapshot
 }
 
 func (p *PriceCheckerStub) CheckPrice(price ta.PriceSnapshot) error {
@@ -16,7 +18,30 @@ func (p *PriceCheckerStub) CheckPrice(price ta.PriceSnapshot) error {
 	return nil
 }
 func (p *PriceCheckerStub) LogPrice(price ta.PriceSnapshot) error {
+	p.pricesLogged = append(p.pricesLogged, price)
 	return nil
+}
+
+func TestDirector_processFeed_willLogAndCheckPrices(t *testing.T) {
+	// Given
+	priceChecker := &PriceCheckerStub{}
+	sut := New(priceChecker, []ta.PriceFeed{})
+	sut.running = true
+
+	feed := make(chan ta.PriceSnapshot)
+	go func() { feed <- ta.PriceSnapshot{} }()
+
+	// When
+	go sut.processFeed(feed)
+	time.Sleep(time.Millisecond * 1)
+
+	// Then
+	if len(priceChecker.pricesLogged) != 1 {
+		t.Error("price should have been logged")
+	}
+	if len(priceChecker.pricesChecked) != 1 {
+		t.Error("price should have been logged")
+	}
 }
 
 func TestDirector_processFeed_willNotRunIfRunningIsFalse(t *testing.T) {

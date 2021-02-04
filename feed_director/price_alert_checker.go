@@ -4,7 +4,6 @@ import (
 	ta "github.com/vulski/tendy-alerts"
 	"log"
 	"math"
-	"time"
 )
 
 type PriceChecker interface {
@@ -27,11 +26,11 @@ func NewPriceChecker(notifierFactory ta.NotifierFactory, alertRepo ta.AlertRepos
 }
 
 func (a *PriceCheckerImpl) LogPrice(price ta.PriceSnapshot) error {
-	previous, err := a.priceRepo.GetLatestForFrequency(ta.FifteenMinuteFrequency)
+	previous, err := a.priceRepo.GetLatest(ta.FifteenMinuteFrequency, price.Exchange)
 	if err != nil {
 		return err
 	}
-	if previous.CreatedAt.Sub(price.CreatedAt).Minutes() > float64(time.Minute * 15){
+	if price.CreatedAt.Sub(previous.CreatedAt).Minutes() > 15 {
 		_, err = a.priceRepo.Save(price)
 		if err != nil {
 			return err
@@ -86,7 +85,7 @@ func (p *PriceCheckerImpl) shouldAlertUser(latestPrice ta.PriceSnapshot, alert t
 		return latestPrice.Price > alert.Price
 
 	case ta.PercentageChangeAlert:
-		price, err := p.priceRepo.GetLatestForFrequency(alert.Frequency)
+		price, err := p.priceRepo.GetLatest(alert.Frequency, latestPrice.Exchange)
 		if err != nil {
 			// TODO: Maybe have some retry attempts?
 			log.Println("error: " + err.Error())

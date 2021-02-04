@@ -4,7 +4,6 @@ import (
 	ta "github.com/vulski/tendy-alerts"
 )
 
-// TODO: Better name lel
 type Director struct {
 	running      bool
 	feeds        map[string]map[string]chan ta.PriceSnapshot
@@ -52,6 +51,7 @@ func (m *Director) processFeed(feed chan ta.PriceSnapshot) {
 		select {
 		case snapshot := <-feed:
 			m.priceChecker.CheckPrice(snapshot)
+			m.priceChecker.LogPrice(snapshot)
 		}
 	}
 }
